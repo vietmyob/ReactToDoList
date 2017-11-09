@@ -1,0 +1,8 @@
+{
+  "actions": [
+    { "id": 1, "description": "Wake Up"},
+    { "id": 2, "description": "Go to work"},
+    { "id": 3, "description": "Eat Lunch"},
+    { "id": 4, "description": "Go Home"}
+  ]
+}

@@ -5,10 +5,16 @@ export default class ToDoBox extends React.Component {
         super();
         this.state = {
             actions: []
+        };
+        {
+            this._getActions()
+                .then((actions) => this.setState({actions}))
+                .catch((error) => console.log(error()))
         }
     }
 
     render() {
+
         return (
             <div style={{textAlign: 'center'}}>
                 <Header />
@@ -16,6 +22,23 @@ export default class ToDoBox extends React.Component {
                 <ToDoForm addAction={this._addAction.bind(this)}/>
                 {this.state.actions.map(action => <Action {...action} key={action.id} remove={() => this._removeAction(action.id)}/>)}
             </div>);
+    }
+
+    _getActions(){
+        return new Promise((resolve, reject) => {
+            let uri = "http://localhost:3000/actions";
+            let request = new XMLHttpRequest();
+            request.open("GET", uri, true);
+            request.onload = () => {
+                if(request.status >= 200 && request.status < 400){
+                    resolve( JSON.parse(request.response));
+                }
+            };
+            request.onerror = () =>{
+                reject(new Error("Couldnt call the API"))
+            };
+            request.send();
+        });
     }
 
     _addAction(description){
