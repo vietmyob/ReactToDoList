@@ -6,21 +6,18 @@ export default class ToDoBox extends React.Component {
         this.state = {
             actions: []
         };
-        {
-            this._getActions()
-                .then((actions) => this.setState({actions}))
-                .catch((error) => console.log(error()))
-        }
+        this._getActions()
+            .then((actions) => this.setState({actions}))
+            .catch((error) => console.log(error));
     }
 
     render() {
-
         return (
             <div style={{textAlign: 'center'}}>
                 <Header />
                 <Title getTitle={this._getTitle.bind(this)} numberOfActions={this.state.actions.length}/>
                 <ToDoForm addAction={this._addAction.bind(this)}/>
-                {this.state.actions.map(action => <Action {...action} key={action.id} remove={() => this._removeAction(action.id)}/>)}
+                {this.state.actions.map(action => <Action description={action.description} key={action.id} remove={() => this._removeAction(action.id)}/>)}
             </div>);
     }
 
@@ -35,7 +32,7 @@ export default class ToDoBox extends React.Component {
                 }
             };
             request.onerror = () =>{
-                reject(new Error("Couldnt call the API"))
+                reject(new Error("Couldn't call the API"))
             };
             request.send();
         });
@@ -43,7 +40,21 @@ export default class ToDoBox extends React.Component {
 
     _addAction(description){
         const action = {id: this.state.actions.length + 1, description};
-        this.setState({actions: this.state.actions.concat([action])});
+        return new Promise((resolve, reject) => {
+            let uri = "http://localhost:3000/actions";
+            let request = new XMLHttpRequest();
+            request.open("POST", uri, true);
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            request.onload = () => {
+                if(request.status >= 200 && request.status < 400){
+                    resolve( console.log("Added successfully") );
+                }
+            };
+            request.onerror = () =>{
+                reject(new Error("Couldn't call the API"))
+            };
+            request.send(JSON.stringify(action));
+        });
     }
 
     _removeAction(actionId){
