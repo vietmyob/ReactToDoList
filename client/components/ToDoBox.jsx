@@ -6,6 +6,15 @@ export default class ToDoBox extends React.Component {
         this.state = {
             actions: []
         };
+    }
+
+    componentWillMount(){
+        this._getActions()
+            .then((actions) => this.setState({actions}))
+            .catch((error) => console.log(error));
+    }
+
+    componentWillUpdate(){
         this._getActions()
             .then((actions) => this.setState({actions}))
             .catch((error) => console.log(error));
